@@ -108,4 +108,69 @@ public class Httprequests {
 		// response zurueckgeben.
 		return data;
 	}
+
+	public String postPm(String url, String betreff, String text, String userid, String value) throws ClientProtocolException, IOException {
+		
+		// URL wird neu gesetzt.
+		this.url = url;
+		
+		// Post wird initialisiert...
+		post = new HttpPost(this.url);
+
+		// Neue Liste wird erstellt...
+		List<NameValuePair> listederdaten = new ArrayList<NameValuePair>();
+		listederdaten.add(new BasicNameValuePair("userid", userid));
+		listederdaten.add(new BasicNameValuePair("receiver_list_number", value));
+		listederdaten.add(new BasicNameValuePair("betreff", betreff));
+		listederdaten.add(new BasicNameValuePair("text", text));
+		
+		// Uebergabe der input felder (der liste) as Clanplanet benoetigt...
+		post.setEntity(new UrlEncodedFormEntity(listederdaten));
+		
+		// response wird gesetzt.
+		HttpResponse response = client.execute(post);
+
+		// Buffer zum lesender seiten rueckgabe
+		BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		StringBuffer sb = new StringBuffer();
+		String l = "";
+		String nl = System.getProperty("line.separator");
+		while((l = in.readLine()) != null) {
+			sb.append(l + nl);
+		}
+		in.close();
+		String data = sb.toString();
+		
+		// response zurueckgeben.
+		return data;
+	}
+	
+	public String post(ArrayList<NameValuePair>listederdaten, String url) throws ClientProtocolException, IOException {
+		
+		// URL wird neu gesetzt.
+		this.url = url;
+		
+		// Post wird initialisiert...
+		post = new HttpPost(this.url);
+		
+		// Uebergabe der input felder (der liste) as Clanplanet benoetigt...
+		post.setEntity(new UrlEncodedFormEntity(listederdaten));
+		
+		// response wird gesetzt.
+		HttpResponse response = client.execute(post);
+
+		// Buffer zum lesender seiten rueckgabe
+		BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		StringBuffer sb = new StringBuffer();
+		String l = "";
+		String nl = System.getProperty("line.separator");
+		while((l = in.readLine()) != null) {
+			sb.append(l + nl);
+		}
+		in.close();
+		String data = sb.toString();
+		
+		// response zurueckgeben.
+		return data;
+	}
 }

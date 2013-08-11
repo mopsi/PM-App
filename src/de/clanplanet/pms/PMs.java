@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import org.apache.http.client.ClientProtocolException;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -311,6 +312,7 @@ public class PMs extends Activity {
 		intent_read.putExtra("link", link.get(i));
 		intent_read.putExtra("betreff", betreff.get(i));
 		intent_read.putExtra("datum", date.get(i));
+		intent_read.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent_read);
 	}
 	
@@ -371,6 +373,9 @@ public class PMs extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
+		
+		ActionBar actionbar = getActionBar();
+		actionbar.setDisplayHomeAsUpEnabled(false);
 		
 		return true;
 	}

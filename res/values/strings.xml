@@ -11,5 +11,9 @@
     <string name="title_activity_read__pm">PM lesen</string>
     <string name="hello_world">Hello world!</string>
     <string name="answer">Antworten !</string>
+    <string name="title_activity_reply">PM Antworten</string>
+    <string name="to_id_string">An: </string>
+    <string name="betreff">Betreff: </string>
+    <string name="text_id">Text: </string>
 
 </resources>

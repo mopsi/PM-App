@@ -1,6 +1,7 @@
 package de.clanplanet.pms;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +16,7 @@ import android.os.Handler;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -68,10 +70,6 @@ public class Read_PM extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_read__pm);
-		
-		actionBar = getActionBar();
-		
-		actionBar.setDisplayHomeAsUpEnabled(true);
 		
 		// Bekommener intent...
 		intent = getIntent();
@@ -131,11 +129,23 @@ public class Read_PM extends Activity {
 							
 							if(m.find()) {
 								naricht_id.removeAllViews();
-								TextView text = new TextView(getApplicationContext());
-								text.setText(Html.fromHtml(m.group(2)));
+								String html = m.group(2);
+								String reg = "<script language=\"javascript\">buildemail\\('(.*)','(.*)'\\)</script>";
+								ArrayList<String> name = new ArrayList<String>();
+								Pattern p1 = Pattern.compile(reg);
+								Matcher m1 = p1.matcher(html);
+								int index = 0;
+								while(m1.find()) {
+									name.add(index, m1.group(1) + "@" + m1.group(2));
+									html = html.replaceFirst(reg, name.get(index));
+									index++;
+								}
+								TextView text = new TextView(Read_PM.this);
+								text.setText(Html.fromHtml(html));
+								text.setLinksClickable(true);
 								text.setMovementMethod(LinkMovementMethod.getInstance());
 								text.setTextColor(getResources().getColor(R.color.black));
-								text.setTextSize(20);
+								text.setTextSize(18);
 								naricht_id.addView(text);
 							}
 						} catch (ClientProtocolException e) {
@@ -168,7 +178,33 @@ public class Read_PM extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.read__pm, menu);
+		
+		actionBar = getActionBar();
+		
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		
 		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		switch(item.getItemId()) {
+			case android.R.id.home : 
+				onBackPressed();
+				return true;
+			case R.id.reply:
+				Intent intent = new Intent(this, Reply.class);
+				intent.putExtra("betreff", betreff);
+				intent.putExtra("absender", absender);
+				intent.putExtra("link", link);
+				startActivity(intent);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+				
+		}
+		
 	}
 
 }
