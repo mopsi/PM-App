@@ -11,7 +11,9 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,7 +22,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -102,17 +103,59 @@ public class Reply extends Activity {
 		betreff_id  = (EditText) findViewById(R.id.betreff_reply_id);
 		absender_id = (EditText) findViewById(R.id.to_reply_id);
 		naricht_id  = (EditText) findViewById(R.id.text_reply_id);
-		antworten   = (Button) findViewById(R.id.button_id_reply);
 		
 		// In die Felder schreiben...
-		betreff_id.setText("Re: " + betreff);
+		if(betreff.startsWith("Re:")) {
+			betreff_id.setText(betreff);
+		}
+		else {
+			betreff_id.setText("Re: " + betreff);
+		}
+		
 		absender_id.setText(absender);
 		
-		// Dem Button einen onClickListener mitgeben...
-		antworten.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View arg0) {
+		alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+	}
+	
+	public void setzeDialog(String message) {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+							.setCancelable(false)
+							.setMessage(message)
+							.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+								
+								public void onClick(DialogInterface dialog, int which) {
+									dialog.cancel();
+								}
+							});
+		AlertDialog dialog1 = dialog.create();
+		dialog1.show();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.menu, menu);
+		
+		actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		
+		return true;
+	}
+	
+	PendingIntent service;
+	AlarmManager alarm;
+	
+	@Override 
+	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		switch(item.getItemId()) {
+		
+			case android.R.id.home:
+				
+				onBackPressed();
+				
+				return true;
+			case R.id.reply:
 				betreff  = betreff_id.getText().toString();
 				absender = absender_id.getText().toString();
 				text     = naricht_id.getText().toString();
@@ -166,6 +209,8 @@ public class Reply extends Activity {
 										
 										p = Pattern.compile("<input type=\"hidden\" name=\"receiver_list_number\" value=\"(.*)\">");
 										
+										text = text.replace("\n", "\r\n");
+										
 										m = p.matcher(data);
 										
 										if(m.find()) {
@@ -206,48 +251,66 @@ public class Reply extends Activity {
 								e.printStackTrace();
 							}
 						}
-					}, 5 * 1000);
+					}, 2 * 1000);
 				}
-			}
-		});
-	}
-	
-	public void setzeDialog(String message) {
-		AlertDialog.Builder dialog = new AlertDialog.Builder(this)
-							.setCancelable(false)
-							.setMessage(message)
-							.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-								
-								public void onClick(DialogInterface dialog, int which) {
-									dialog.cancel();
-								}
-							});
-		AlertDialog dialog1 = dialog.create();
-		dialog1.show();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.reply, menu);
-		
-		actionBar = getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		
-		return true;
-	}
-	
-	@Override 
-	public boolean onOptionsItemSelected(MenuItem item) {
-		
-		switch(item.getItemId()) {
-		
-			case android.R.id.home:
 				
-				onBackPressed();
-				
+				return true;			
+				case R.id.readed_pms_show: 
+					// Gelesene PM's activity anzeigen !
+					intent = new Intent(this, ReadedPMs.class);
+					startActivity(intent);
 				return true;
-				
+				case R.id.logout_item:
+					DialogInterface.OnClickListener onClicklistener = new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							switch(which) {
+								case DialogInterface.BUTTON_NEGATIVE :
+									// Nein gedrueckt...
+									// Dialog schließen da Logout nicht beabsichtigt...
+									dialog.dismiss();
+									
+								break;
+								case DialogInterface.BUTTON_POSITIVE :
+									// Ja gedrueckt...
+									// Login Intent wird gestartet und sharedpreferences
+									// (Benutzername und Passwort) werden zurueckgesetzt...
+									pref1.edit().putString("username_clanplanet_pms", "").commit();
+									pref2.edit().putString("passwort_clanplanet_pms", "").commit();
+									SharedPreferences isNoti;
+									isNoti = getSharedPreferences("isNoti_clanplanet_pms", MODE_PRIVATE);
+									isNoti.edit().putBoolean("isNoti_clanplanet_pms", false).commit();
+									
+									// Service bekommen...
+									service = PendingIntent.getService(getApplicationContext(), 0, new Intent(getApplicationContext(), Service_PM.class), 0);
+									
+									// Service stoppen...
+									alarm.cancel(service);
+									
+									// Login Activity starten !
+									startActivity(new Intent(getApplicationContext(), Main.class));
+									
+									// Dialog wird geschlossen...
+									dialog.dismiss();
+								break;
+							}
+						}
+					};
+					
+					AlertDialog.Builder builder = new AlertDialog.Builder(this);
+					builder.setMessage("Willst du dich wirklich ausloggen ?")
+						   .setNegativeButton("Nein", onClicklistener)
+						   .setPositiveButton("Ja", onClicklistener)
+						   .show();
+				return true;
+				case R.id.new_pm_write:
+					intent = new Intent(this, NewPM.class);
+					intent.putExtra("absender", "");
+					intent.putExtra("betreff", "");
+					intent.putExtra("link", "");
+					startActivity(intent);
+				return true;
 			default:
 				
 				return super.onOptionsItemSelected(item);

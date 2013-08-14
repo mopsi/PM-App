@@ -37,11 +37,19 @@
         </activity>
         <activity
             android:name="de.clanplanet.pms.Read_PM"
-            android:label="@string/title_activity_read__pm">
+            android:label="@string/title_activity_read__pm" >
         </activity>
         <activity
             android:name="de.clanplanet.pms.Reply"
             android:label="@string/title_activity_reply" >
+        </activity>
+        <activity
+            android:name="de.clanplanet.pms.ReadedPMs"
+            android:label="@string/title_activity_readed_pms" >
+        </activity>
+        <activity
+            android:name="de.clanplanet.pms.NewPM"
+            android:label="@string/title_activity_new_pm" >
         </activity>
     </application>
 

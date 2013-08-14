@@ -9,6 +9,10 @@ import org.apache.http.client.ClientProtocolException;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -73,6 +77,8 @@ public class Read_PM extends Activity {
 		
 		// Bekommener intent...
 		intent = getIntent();
+		
+		alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
 		
 		regex = "<td class=\"lcell[ab]\"><div class=\"mark\" style=\"text-align: center\">(.*)</div>(.*)</td>";
 		p = Pattern.compile(regex);
@@ -140,6 +146,7 @@ public class Read_PM extends Activity {
 									html = html.replaceFirst(reg, name.get(index));
 									index++;
 								}
+								html = replace_html_smileys(html);
 								TextView text = new TextView(Read_PM.this);
 								text.setText(Html.fromHtml(html));
 								text.setLinksClickable(true);
@@ -157,7 +164,7 @@ public class Read_PM extends Activity {
 						}
 					}
 					
-				}, 3 * 1000);
+				}, 1 * 1000);
 			}
 			else {
 				// Nicht eingeloggt... sollte nicht passieren !!
@@ -173,11 +180,80 @@ public class Read_PM extends Activity {
 			e.printStackTrace();
 		}
 	}
+	
+	public String replace_html_smileys(String input) {
+		
+		String baseurl = "http://gfx.clanplanet.de/emoticons/";
+		String output = input;
+		// String image = "smile.gif";
+		ArrayList <String> smilelist = new ArrayList <String>();
+		smilelist.add(0, "smile.gif");
+		smilelist.add(1, "twinkle.gif");
+		smilelist.add(2, "biglaugh.gif");
+		smilelist.add(3, "schepp.gif");
+		smilelist.add(4, "rofl.gif");
+		smilelist.add(5, "wink.gif");
+		smilelist.add(6, "knutsch.gif");
+		smilelist.add(7, "happy.gif");
+		smilelist.add(8, "punch.gif");
+		smilelist.add(9, "evil.gif");
+		smilelist.add(10, "kuss.gif");
+		smilelist.add(11, "schnecke.gif");
+		smilelist.add(12, "sad.gif");
+		smilelist.add(13, "tongue.gif");
+		smilelist.add(14, "grins.gif");
+		smilelist.add(15, "oop.gif");
+		smilelist.add(16, "grr.gif");
+		smilelist.add(17, "flop.gif");
+		smilelist.add(18, "cool.gif");
+		smilelist.add(19, "knuddel.gif");
+		smilelist.add(20, "snief.gif");
+		smilelist.add(21, "drink.gif");
+		smilelist.add(19, "confused.gif");
+		smilelist.add(20, "herz.gif");
+		smilelist.add(21, "kaffee.gif");
+		
+		ArrayList <String> replacement = new ArrayList<String>();
+		replacement.add(0, ":)");
+		replacement.add(1, ";)");
+		replacement.add(2, ":D");
+		replacement.add(3, ":/");
+		replacement.add(4, "*rofl*");
+		replacement.add(5, "*wink*");
+		replacement.add(6, "*knutsch*");
+		replacement.add(7, "*happy*");
+		replacement.add(8, "*punch*");
+		replacement.add(9, "*evil");
+		replacement.add(10, "*kuss*");
+		replacement.add(11, "*schnecke*");
+		replacement.add(12, ":(");
+		replacement.add(13, ":P");
+		replacement.add(14, "*g*");
+		replacement.add(15, ":o");
+		replacement.add(16, "*grr*");
+		replacement.add(17, "*flop*");
+		replacement.add(18, "*cool*");
+		replacement.add(19, "*knuddel*");
+		replacement.add(20, "*snief*");
+		replacement.add(21, "*drink*");
+		replacement.add(22, "*confused*");
+		replacement.add(23, "*herz*");
+		replacement.add(24, "*kaffee*");
+		
+		for(int i = 0; i < smilelist.size(); i++) {
+			output = output.replace("<img src=\"" + baseurl + smilelist.get(i) + "\" align=\"absmiddle\">", replacement.get(i));
+		}		
+		return output;
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.read__pm, menu);
+		getMenuInflater().inflate(R.menu.menu, menu);
+		
+		if(getIntent().getExtras().getString("absender").indexOf("Clanplanet") > -1) {
+			menu.getItem(0).setVisible(false);
+		}
 		
 		actionBar = getActionBar();
 		
@@ -186,13 +262,72 @@ public class Read_PM extends Activity {
 		return true;
 	}
 	
+	PendingIntent service;
+	AlarmManager alarm;
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		
 		switch(item.getItemId()) {
 			case android.R.id.home : 
 				onBackPressed();
+				return true;			
+			case R.id.readed_pms_show: 
+				// Gelesene PM's activity anzeigen !
+				intent = new Intent(this, ReadedPMs.class);
+				startActivity(intent);
 				return true;
+			case R.id.logout_item:
+				DialogInterface.OnClickListener onClicklistener = new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch(which) {
+							case DialogInterface.BUTTON_NEGATIVE :
+								// Nein gedrueckt...
+								// Dialog schließen da Logout nicht beabsichtigt...
+								dialog.dismiss();
+								
+							break;
+							case DialogInterface.BUTTON_POSITIVE :
+								// Ja gedrueckt...
+								// Login Intent wird gestartet und sharedpreferences
+								// (Benutzername und Passwort) werden zurueckgesetzt...
+								pref1.edit().putString("username_clanplanet_pms", "").commit();
+								pref2.edit().putString("passwort_clanplanet_pms", "").commit();
+								SharedPreferences isNoti;
+								isNoti = getSharedPreferences("isNoti_clanplanet_pms", MODE_PRIVATE);
+								isNoti.edit().putBoolean("isNoti_clanplanet_pms", false).commit();
+								
+								// Service bekommen...
+								service = PendingIntent.getService(getApplicationContext(), 0, new Intent(getApplicationContext(), Service_PM.class), 0);
+								
+								// Service stoppen...
+								alarm.cancel(service);
+								
+								// Login Activity starten !
+								startActivity(new Intent(getApplicationContext(), Main.class));
+								
+								// Dialog wird geschlossen...
+								dialog.dismiss();
+							break;
+						}
+					}
+				};
+				
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setMessage("Willst du dich wirklich ausloggen ?")
+					   .setNegativeButton("Nein", onClicklistener)
+					   .setPositiveButton("Ja", onClicklistener)
+					   .show();
+			return true;
+			case R.id.new_pm_write:
+				intent = new Intent(this, NewPM.class);
+				intent.putExtra("absender", "");
+				intent.putExtra("betreff", "");
+				intent.putExtra("link", "");
+				startActivity(intent);
+			return true;
 			case R.id.reply:
 				Intent intent = new Intent(this, Reply.class);
 				intent.putExtra("betreff", betreff);

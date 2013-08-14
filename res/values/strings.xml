@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">ClanplanetPMs</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Einstellungen</string>
     <string name="username_text">Username:</string>
     <string name="password_text">Passwort:</string>
     <string name="title_activity_pms">PMs</string>
@@ -15,5 +15,9 @@
     <string name="to_id_string">An: </string>
     <string name="betreff">Betreff: </string>
     <string name="text_id">Text: </string>
+    <string name="pms_readed">Gelesene Narichten</string>
+    <string name="title_activity_readed_pms">Gelesene Narichten</string>
+    <string name="new_pm">Neue PM schreiben !</string>
+    <string name="title_activity_new_pm">Neue PM Schreiben !</string>
 
 </resources>

@@ -45,6 +45,9 @@ public class Service_PM extends Service {
 	// Gespeicherte Anzahl an PM's
 	SharedPreferences pref3;
 	
+	// Prueft ob Noti bei fehlender Interverbindung gesetzt oder nicht...
+	SharedPreferences pref4;
+	
 	// Pattern
 	Pattern p;
 	
@@ -103,8 +106,11 @@ public class Service_PM extends Service {
 		// Pref2 initialisieren
 		pref2 = getSharedPreferences("passwort_clanplanet_pms", MODE_PRIVATE);
 		
-		// Pref2 initialisieren
+		// Pref3 initialisieren
 		pref3 = getSharedPreferences("anzahl_der_cp_pms", MODE_PRIVATE);
+		
+		// Pref4 initialisieren
+		pref4 = getSharedPreferences("is_internet_noti_on", MODE_PRIVATE);
 		
 		// Den gespeicherten Benutzernamen in die Variable username speichern...
 		username = pref1.getString("username_clanplanet_pms", "");
@@ -128,6 +134,9 @@ public class Service_PM extends Service {
 					public void run() {
 					
 						if(isOnline()) {
+							// Pref4 auf false setzen...
+							pref4.edit().putBoolean("is_internet_noti_on", false);
+							
 							// Versuche Request, sonst Fehlermeldung im Logcat
 							try {
 								// Rueckgabe wird in data variable gespeichert...
@@ -139,23 +148,6 @@ public class Service_PM extends Service {
 								if(matcher.find()) {
 									anzahl_pms = 0;
 									// Neue PM gefunden...
-									// Prufen ob Notification bereits gesetzt...
-								/*	if(isNoti.getBoolean("isNoti_clanplanet_pms", false) == false) {
-										// Noti noch nicht gesetzt...
-										
-										Intent intent = new Intent(getApplicationContext(), PMs.class);
-										PendingIntent pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-										createNot(pintent, "Du hast eine neue Clanplanet PM erhalten !", nMgr, NOTIFICATION_ID);
-										// Da Notification gesetzt wird boolean jetzt true...
-										isNoti.edit().putBoolean("isNoti_clanplanet_pms", true).commit();
-										
-										// in der naechsten min neue Abfrage starten !
-										h.postDelayed(this, 60 * 1000);
-									}
-									else {
-										h.postDelayed(this, 60 * 1000);
-									}*/
 									
 									// Neues suchmuster fuer die PM's
 									Pattern p1 = Pattern.compile("<tr>\\s*<td class=\"lcell[ab]\" nowrap><span class=\"small\"><span >(.*)</span></span></td>\\s*<td class=\"lcell[ab]\" width=\"100%\"><span class=\"small\">\\s*<a href=\"(.*)\"><span >(.*)</span></a>\\s*</span></td>\\s*<td class=\"lcell[ab]\" width=\"120\" nowrap><span class=\"small\"><span >(.*)</span></span></td>\\s*</tr>");
@@ -187,7 +179,6 @@ public class Service_PM extends Service {
 										pref3.edit().putInt("anzahl_der_cp_pms", anzahl_pms).commit();
 										h.postDelayed(this, 60 * 1000);
 									}
-									
 								}
 								else {
 									// Keine neue PM gefunden...
@@ -206,17 +197,18 @@ public class Service_PM extends Service {
 						}
 						else {
 							// Internetverbindung nicht mehr Moeglich
-							// deshalb Noti ausgeben und Programm beenden...
+							// deshalb Noti ausgeben und in 60 sekunden wieder versuchen !...
 							
 							Intent intent = new Intent(getApplicationContext(), Main.class);
 							PendingIntent pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-							createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
-						
+							if(pref4.getBoolean("is_internet_noti_on", false) == false) {
+								createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
+								pref4.edit().putBoolean("is_internet_noti_on", true);
+							}
 							pref3.edit().putInt("anzahl_der_cp_pms", 0).commit();
 							
-							stopSelf();
-							
+							h.postDelayed(this, 60 * 1000);
 						}
 					}
 				}, 3000);

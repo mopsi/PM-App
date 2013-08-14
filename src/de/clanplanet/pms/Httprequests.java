@@ -8,6 +8,7 @@ package de.clanplanet.pms;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,16 +117,18 @@ public class Httprequests {
 		
 		// Post wird initialisiert...
 		post = new HttpPost(this.url);
-
-		// Neue Liste wird erstellt...
-		List<NameValuePair> listederdaten = new ArrayList<NameValuePair>();
-		listederdaten.add(new BasicNameValuePair("userid", userid));
-		listederdaten.add(new BasicNameValuePair("receiver_list_number", value));
-		listederdaten.add(new BasicNameValuePair("betreff", betreff));
-		listederdaten.add(new BasicNameValuePair("text", text));
 		
+		List<NameValuePair> list = new ArrayList<NameValuePair>();
+
+		list.add(new BasicNameValuePair("userid", URLDecoder.decode(userid, "UTF-8")));
+
+		list.add(new BasicNameValuePair("text", URLDecoder.decode(text, "UTF-8")));
+
+		list.add(new BasicNameValuePair("betreff", URLDecoder.decode(betreff, "UTF-8")));
+
+		list.add(new BasicNameValuePair("receiver_list_number", URLDecoder.decode(value, "UTF-8")));
 		// Uebergabe der input felder (der liste) as Clanplanet benoetigt...
-		post.setEntity(new UrlEncodedFormEntity(listederdaten));
+		post.setEntity(new UrlEncodedFormEntity(list));
 		
 		// response wird gesetzt.
 		HttpResponse response = client.execute(post);

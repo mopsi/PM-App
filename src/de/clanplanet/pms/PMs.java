@@ -8,11 +8,13 @@ import java.util.regex.Pattern;
 import org.apache.http.client.ClientProtocolException;
 
 import android.app.ActionBar;
+import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,18 +22,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.text.Html;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class PMs extends Activity {
-	
-	// Der Meldungs TextView
-	TextView pms;
-	
+public class PMs extends Activity {	
 	// Handler fuer zeitverzoegerung erstellen
 	Handler h;
 	
@@ -98,6 +97,9 @@ public class PMs extends Activity {
 	// Menue fuer Logout, usw...
 	Menu men;
 	
+	// ProgressDialog erstellen
+	ProgressDialog prog;
+	
 	// ScrollView setzen...
 	LinearLayout view_scroll;
 	
@@ -128,9 +130,6 @@ public class PMs extends Activity {
 		// Passwort Preference initialisieren.
 		pref2 = getSharedPreferences("passwort_clanplanet_pms", MODE_PRIVATE);
 		
-		// PMs TextView bekommen der Meldung enthaelt
-		pms = (TextView) findViewById(R.id.PMs);
-		
 		// Gespeicherten Benutzernamen bekommen.
 		username = pref1.getString("username_clanplanet_pms", "");
 		
@@ -149,8 +148,14 @@ public class PMs extends Activity {
 		// Pattern wird gesetzt
 		p = Pattern.compile("<tr>\\s*<th>\\s*Absender\\s*</th>\\s*<th>Betreff</th>\\s*<th>Datum</th>\\s*</tr>");
 		
-		// Text in das TextFeld setzen...
-		pms.setText("Clanplanet PM's werden geprueft...");
+		// Progress initialisieren
+		// pms.setText("Clanplanet PM's werden geprueft...");
+		prog = new ProgressDialog(this);
+		prog.setCancelable(false);
+		prog.getWindow().setGravity(Gravity.CENTER);
+		prog.setTitle("Clanplanet PM's werden geprüft...");
+		prog.setMessage("PM's werden geladen...");
+		prog.show();
 		
 		// Intent fuer Service
 		Intent intent = new Intent(getApplicationContext(), Service_PM.class);
@@ -198,10 +203,7 @@ public class PMs extends Activity {
 								// Ausgabe das neue PM erhalten wurde 
 								// und verlinkung per HTML 
 								// auf die Clanpanet Hauptseite !
-								/*pms.setText(Html.fromHtml("<a href='http://www.clanplanet.de'>Neue PM erhalten !!</a>"));
-								pms.setMovementMethod(LinkMovementMethod.getInstance());*/
-							
-								String reg = "<tr>\\s*<td class=\"lcell[ab]\" nowrap><span class=\"small\"><span >(.*)</span></span></td>\\s*<td class=\"lcell[ab]\" width=\"100%\"><span class=\"small\">\\s*<a href=\"(.*)\"><span >(.*)</span></a>\\s*</span></td>\\s*<td class=\"lcell[ab]\" width=\"120\" nowrap><span class=\"small\"><span >(.*)</span></span></td>\\s*</tr>";
+								String reg = "<tr>\\s*<td class=\"lcell[ab]\" nowrap><span class=\"small\"><span >(.*)</span></span></td>\\s*<td class=\"lcell[ab]\" width=\"100%\"><span class=\"small\">\\s*(?:<span class=\"(?:mark|unalert|alert)\">[!#]</span>\\s*)?<a href=\"(.*)\"><span >(.*)</span></a>\\s*</span></td>\\s*<td class=\"lcell[ab]\" width=\"120\" nowrap><span class=\"small\"><span >(.*)</span></span></td>\\s*</tr>";
 								
 								Pattern p1 = Pattern.compile(reg);
 								m1 = p1.matcher(data);
@@ -210,7 +212,6 @@ public class PMs extends Activity {
 								betreff = new ArrayList<String>();
 								date = new ArrayList<String>();
 								index = 0;
-								pms.setText("");
 								view_scroll.removeAllViews();
 								while(m1.find()) {
 									// 1 = Name
@@ -227,9 +228,9 @@ public class PMs extends Activity {
 									betreffPM = betreff.get(index);
 									datum     = date.get(index);
 									text.setId(index);
-									text.setText(Html.fromHtml("Von: " + writer + "<br>Betreff: " + betreffPM + "<br>Datum: " + datum + "<br><br>"));
+									text.setText(Html.fromHtml("<u>Von: " + writer + "<br>Betreff: " + betreffPM + "<br>Datum: " + datum + "</u><br><br>"));
 									text.setTextSize(18);
-									text.setTextColor(getResources().getColor(R.color.black));
+									text.setTextColor(getResources().getColor(R.color.blue));
 									text.setOnClickListener(new View.OnClickListener() {
 										
 										@Override
@@ -240,10 +241,17 @@ public class PMs extends Activity {
 									view_scroll.addView(text, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 									index++;
 								}
+								prog.cancel();
 							}
 							else {
-								// Keine neue PM erhalten...		
-								pms.setText("Keine neue PM erhalten !");
+								// Keine neue PM erhalten...
+								view_scroll.removeAllViews();
+								TextView textView = new TextView(getApplicationContext());
+								textView.setText("Keine neue PM erhalten !");
+								textView.setTextSize(18);
+								textView.setTextColor(getResources().getColor(R.color.black));
+								view_scroll.addView(textView);
+								prog.cancel();
 							}
 							
 							// Alle 30 Sekunden abfragen...
@@ -264,7 +272,7 @@ public class PMs extends Activity {
 			else {
 				// Nicht eingeloggt... (Sollte niemals passieren ... !)
 				// Fehlermeldung wird ausgegegeben... 
-				pms.setText("Du wurdest nicht erfolgreich eingeloggt. Das Programm beendet sich in 4 sekunden automatisch");
+				Toast.makeText(getApplicationContext(), "Unbekannter Fehler...", Toast.LENGTH_LONG).show();
 				// Zeit verzoegerung von 4s
 				h.postDelayed(new Runnable() {
 					public void run() {
@@ -316,10 +324,24 @@ public class PMs extends Activity {
 		startActivity(intent_read);
 	}
 	
+	Intent intent;
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem inputs) {
 		
 		switch(inputs.getItemId()) {
+			case R.id.readed_pms_show: 
+				// Gelesene PM's activity anzeigen !
+				intent = new Intent(this, ReadedPMs.class);
+				startActivity(intent);
+			break;
+			case R.id.new_pm_write:
+				intent = new Intent(this, NewPM.class);
+				intent.putExtra("absender", "");
+				intent.putExtra("betreff", "");
+				intent.putExtra("link", "");
+				startActivity(intent);
+			break;
 			case R.id.logout_item:
 				DialogInterface.OnClickListener onClicklistener = new DialogInterface.OnClickListener() {
 					
@@ -372,10 +394,11 @@ public class PMs extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.menu, menu);
 		
-		ActionBar actionbar = getActionBar();
-		actionbar.setDisplayHomeAsUpEnabled(false);
+		ActionBar bar = getActionBar();
+		bar.setDisplayHomeAsUpEnabled(false);
+		menu.getItem(0).setVisible(false); 
 		
 		return true;
 	}

@@ -47,11 +47,5 @@
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:maxHeight="220dp" />
-
-    <Button
-        android:id="@+id/button_id_reply"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/answer" />
-
+    
 </TableLayout>
