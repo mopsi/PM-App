@@ -23,11 +23,8 @@ import org.apache.http.client.ClientProtocolException;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -129,18 +126,21 @@ public class Main extends Activity {
 		
 		// Httprequests wird initialisiert...
 		req = new Httprequests("http://www.clanplanet.de");
-
-		// Suchmuster...
-		regex = "Eingeloggt als " + pref1.getString("username_clanplanet_pms", "");
 		
 		/*
 		 * Abfragen ob schonmal eingeloggt...
 		 * 
 		 */
-		if(pref1.getString("username_clanplanet_pms", "") != "" 
-		   && pref2.getString("passwort_clanplanet_pms", "") != "") {
+		if(!pref1.getString("username_clanplanet_pms", "").isEmpty()
+		   && !pref2.getString("passwort_clanplanet_pms", "").isEmpty()) {
 			try {
+				user.setText(pref1.getString("username_clanplanet_pms", ""));
+				pass.setText(pref2.getString("passwort_clanplanet_pms", ""));
 				data = req.postLoginClanplanet(pref1.getString("username_clanplanet_pms", ""), pref2.getString("passwort_clanplanet_pms", ""));				
+
+				// Suchmuster...
+				regex = "Eingeloggt als " + pref1.getString("username_clanplanet_pms", "");
+				
 				// Pruefen ob eingeloggt....
 				if(data.indexOf(regex) > -1) {
 					// Eingeloggt
@@ -155,9 +155,11 @@ public class Main extends Activity {
 				}
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block
+				Toast.makeText(getApplicationContext(), "Keine Internet verbindung möglich !", Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				Toast.makeText(getApplicationContext(), "Keine Internet verbindung möglich !", Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
 		}
@@ -172,108 +174,99 @@ public class Main extends Activity {
 			user.setText(pref1.getString("username_clanplanet_pms", ""));
 			pass.setText(pref2.getString("passwort_clanplanet_pms", ""));
 			
-			button.setOnClickListener(new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View arg0) {
-					if(isOnline()) {
-						// Ausgabe...
-						error.setText("Daten werden geprueft...");
-						
-						/*
-						 * Benutzername nicht eingegeben
-						 * 
-						 */
-						if(user.getText().toString().isEmpty()) {
-							// Fehlermeldung ausgeben...
-							error.setText("Du musst ein Usernamen eingeben !");
-						}
-						/*
-						 * Passwort nicht eingegeben...
-						 * 
-						 */
-						else if(pass.getText().toString().isEmpty()) {
-							// Fehlermelung ausgeben.
-							error.setText("Du musst ein Passwort eingeben !");
-						}
-						/*
-						 * Beides eingegeben. Programm faerht fort.
-						 * 
-						 */
-						else {	
-							/*
-							 * Daten werden geprueft ...
-							 * 
-							 */
-							
-							// Username wird gesetzt
-							username = user.getText().toString();
-							
-							// Passwort wird gesetzt.
-							passwort = pass.getText().toString();
-							
-							// Username wird gespeichert.
-							pref1.edit().putString("username_clanplanet_pms", username).commit();
-							
-							// Passwort wird gespeichert.
-							pref2.edit().putString("passwort_clanplanet_pms", passwort).commit();
-						
-							/* Versuche den Request...
-							 * falls fehler tritt catch ein.
-							 * 
-							 */
-							try {
-								// Reponse speichern
-								data = req.postLoginClanplanet(username, passwort);
-								
-								/*
-								 * Pruefen ob Eingeloggt oder nicht.
-								 * 
-								 */
-								if(data.indexOf(regex) > -1) {
-									// Eingeloggt !	
-									// Neuer Intent wird initialisiert...
-									i = new Intent();
-									
-									// Klasse fuer den Intent setzen...
-									i.setClass(getApplicationContext(), PMs.class);
-									
-									// Intent starten...
-									startActivity(i);
-									
-									// ************************ //
-									// Klasse endet hier... !!  //
-									// ************************ //
-								}
-								else {
-									// Nicht eingeloggt !
-									// Fehlermeldung wird ausgegeben
-									error.setText("Deine eingegebenen Login Daten sind nicht korrekt.");
-								}
-								
-							} catch (ClientProtocolException e) {
-								e.printStackTrace();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
+		}
+		
+		button.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+					// Ausgabe...
+					error.setText("Daten werden geprueft...");
+					
+					/*
+					 * Benutzername nicht eingegeben
+					 * 
+					 */
+					if(user.getText().toString().isEmpty()) {
+						// Fehlermeldung ausgeben...
+						error.setText("Du musst ein Usernamen eingeben !");
 					}
-					else {
-						Toast.makeText(getApplicationContext(), "Keine Interverbindung möglich !", Toast.LENGTH_LONG).show();
+					/*
+					 * Passwort nicht eingegeben...
+					 * 
+					 */
+					else if(pass.getText().toString().isEmpty()) {
+						// Fehlermelung ausgeben.
+						error.setText("Du musst ein Passwort eingeben !");
+					}
+					/*
+					 * Beides eingegeben. Programm faerht fort.
+					 * 
+					 */
+					else {	
+						/*
+						 * Daten werden geprueft ...
+						 * 
+						 */
+						
+						// Username wird gesetzt
+						username = user.getText().toString();
+						
+						// Passwort wird gesetzt.
+						passwort = pass.getText().toString();
+						
+						// Username wird gespeichert.
+						pref1.edit().putString("username_clanplanet_pms", username).commit();
+						
+						// Passwort wird gespeichert.
+						pref2.edit().putString("passwort_clanplanet_pms", passwort).commit();
+					
+						/* Versuche den Request...
+						 * falls fehler tritt catch ein.
+						 * 
+						 */
+						try {
+							// Reponse speichern
+							data = req.postLoginClanplanet(username, passwort);
+							
+							/*
+							 * Pruefen ob Eingeloggt oder nicht.
+							 * 
+							 */
+
+							// Suchmuster...
+							regex = "Eingeloggt als " + pref1.getString("username_clanplanet_pms", "");
+							
+							if(data.indexOf(regex) > -1) {
+								// Eingeloggt !	
+								// Neuer Intent wird initialisiert...
+								i = new Intent();
+								
+								// Klasse fuer den Intent setzen...
+								i.setClass(getApplicationContext(), PMs.class);
+								
+								// Intent starten...
+								startActivity(i);
+								
+								// ************************ //
+								// Klasse endet hier... !!  //
+								// ************************ //
+							}
+							else {
+								// Nicht eingeloggt !
+								// Fehlermeldung wird ausgegeben
+								error.setText("Deine eingegebenen Login Daten sind nicht korrekt.");
+							}
+							
+						} catch (ClientProtocolException e) {
+							error.setText("Keine Internetverbindung möglich !");
+							e.printStackTrace();
+						} catch (IOException e) {
+							error.setText("Keine Internetverbindung möglich !");
+							e.printStackTrace();
+						}
 					}
 				}
 			});
-		}
-	}
-	
-
-	public boolean isOnline() {
-	    ConnectivityManager cm =
-	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
-	    if (netInfo != null && netInfo.isAvailable() && netInfo.isConnected()) {
-	        return true;
-	    }
-	    return false;
 	}
 }

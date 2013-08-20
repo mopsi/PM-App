@@ -8,7 +8,6 @@ package de.clanplanet.pms;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +58,7 @@ public class Httprequests {
 		listederdaten.add(new BasicNameValuePair("passwort", pw));
 		
 		// Uebergabe der input felder (der liste) as Clanplanet benoetigt...
-		post.setEntity(new UrlEncodedFormEntity(listederdaten));
+		post.setEntity(new UrlEncodedFormEntity(listederdaten, "UTF-8"));
 		
 		// Die Rueckgabe vom Client...
 		HttpResponse response = client.execute(post);
@@ -120,15 +119,15 @@ public class Httprequests {
 		
 		List<NameValuePair> list = new ArrayList<NameValuePair>();
 
-		list.add(new BasicNameValuePair("userid", URLDecoder.decode(userid, "UTF-8")));
+		list.add(new BasicNameValuePair("userid", userid));
 
-		list.add(new BasicNameValuePair("text", URLDecoder.decode(text, "UTF-8")));
+		list.add(new BasicNameValuePair("text", text));
 
-		list.add(new BasicNameValuePair("betreff", URLDecoder.decode(betreff, "UTF-8")));
+		list.add(new BasicNameValuePair("betreff", betreff));
 
-		list.add(new BasicNameValuePair("receiver_list_number", URLDecoder.decode(value, "UTF-8")));
+		list.add(new BasicNameValuePair("receiver_list_number", value));
 		// Uebergabe der input felder (der liste) as Clanplanet benoetigt...
-		post.setEntity(new UrlEncodedFormEntity(list));
+		post.setEntity(new UrlEncodedFormEntity(list, "UTF-8"));
 		
 		// response wird gesetzt.
 		HttpResponse response = client.execute(post);
@@ -157,7 +156,7 @@ public class Httprequests {
 		post = new HttpPost(this.url);
 		
 		// Uebergabe der input felder (der liste) as Clanplanet benoetigt...
-		post.setEntity(new UrlEncodedFormEntity(listederdaten));
+		post.setEntity(new UrlEncodedFormEntity(listederdaten, "UTF-8"));
 		
 		// response wird gesetzt.
 		HttpResponse response = client.execute(post);

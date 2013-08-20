@@ -15,6 +15,7 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
@@ -108,6 +109,13 @@ public class Read_PM extends Activity {
 		link     = extras.getString("link");
 		betreff  = extras.getString("betreff");
 		date     = extras.getString("datum");
+				
+		betreff = betreff.replace("&#228;", "ä");
+		betreff = betreff.replace("&#196;", "Ä");
+		betreff = betreff.replace("&#246;", "ö");
+		betreff = betreff.replace("&#214;", "Ö");
+		betreff = betreff.replace("&#252;", "ü");
+		betreff = betreff.replace("&#220;", "Ü");
 		
 		// Strings in die noetigen Felder eintragen ...
 		from_id.setText("Von: " + absender);
@@ -146,7 +154,14 @@ public class Read_PM extends Activity {
 									html = html.replaceFirst(reg, name.get(index));
 									index++;
 								}
-								html = replace_html_smileys(html);
+								html = replace_html_smileys(html);			
+								
+								html = html.replace("&#228;", "ä");
+								html = html.replace("&#196;", "Ä");
+								html = html.replace("&#246;", "ö");
+								html = html.replace("&#214;", "Ö");
+								html = html.replace("&#252;", "ü");
+								html = html.replace("&#220;", "Ü");
 								TextView text = new TextView(Read_PM.this);
 								text.setText(Html.fromHtml(html));
 								text.setLinksClickable(true);
@@ -277,6 +292,14 @@ public class Read_PM extends Activity {
 				intent = new Intent(this, ReadedPMs.class);
 				startActivity(intent);
 				return true;
+			case R.id.read_sended_pms:
+				intent = new Intent(this, GesendeteNarichten.class);
+				startActivity(intent);
+				return true;
+			case R.id.contacts_menu:
+				intent = new Intent(this, Kontakte.class);
+				startActivity(intent);
+				return true;
 			case R.id.logout_item:
 				DialogInterface.OnClickListener onClicklistener = new DialogInterface.OnClickListener() {
 					
@@ -300,7 +323,7 @@ public class Read_PM extends Activity {
 								isNoti.edit().putBoolean("isNoti_clanplanet_pms", false).commit();
 								
 								// Service bekommen...
-								service = PendingIntent.getService(getApplicationContext(), 0, new Intent(getApplicationContext(), Service_PM.class), 0);
+								service = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), Service_PM.class), 0);
 								
 								// Service stoppen...
 								alarm.cancel(service);
@@ -335,6 +358,40 @@ public class Read_PM extends Activity {
 				intent.putExtra("link", link);
 				startActivity(intent);
 				return true;
+			case R.id.show_help:
+				AlertDialog.Builder builder_ = new AlertDialog.Builder(this);
+				builder_.setTitle("Über Clanplanet PM's App");
+				TextView text = new TextView(this);
+				text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" für die Plattform Clanplanet." +
+							  "<br>" +
+							  "<br>" +
+							  "Die App wurde entwickelt um Android Nutzern das PM Center von www.clanplanet.de zu erleichtern. Sie erfüllt die hauptsächlichen Funktionen des Clanplanet PM Centers." +
+							  "<br>" +
+							  "Was enthält die App für Funktionen (was kann sie mir bieten) ?" +
+							  "<br>" +
+							  "Die App erfüllt die folgenden Funktionen:" +
+							  "<br>" +
+							  	"- Benarichtigung bei neuer PM<br>" +
+							    "- Lesen der neuen PM's<br>" +
+							    "- Direktes Antworten auf PM's<br>" +
+							    "- Gelesene PM's anzeigen<br>" +
+							    "- Gesendete PM's anzeigen<br>" +
+							    "- Kontakten PM's schreiben, editieren und löschen<br>" +
+							    "- Schreiben neuer PM's<br>"));
+				text.setTextColor(getResources().getColor(R.color.black));
+				ScrollView view_scroll_ = new ScrollView(this);
+				view_scroll_.addView(text);
+				builder_.setView(view_scroll_);
+				builder_.setPositiveButton("Okay", new OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int arg1) {
+						dialog.cancel();
+					}
+				});
+				builder_.show();
+			return true;
+
 			default:
 				return super.onOptionsItemSelected(item);
 				

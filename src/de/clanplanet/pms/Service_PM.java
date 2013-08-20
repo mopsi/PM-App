@@ -24,8 +24,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.StrictMode;
@@ -132,8 +130,6 @@ public class Service_PM extends Service {
 				// Wird auf neue PM geprueft...
 				h.postDelayed(new Runnable() {
 					public void run() {
-					
-						if(isOnline()) {
 							// Pref4 auf false setzen...
 							pref4.edit().putBoolean("is_internet_noti_on", false);
 							
@@ -150,7 +146,7 @@ public class Service_PM extends Service {
 									// Neue PM gefunden...
 									
 									// Neues suchmuster fuer die PM's
-									Pattern p1 = Pattern.compile("<tr>\\s*<td class=\"lcell[ab]\" nowrap><span class=\"small\"><span >(.*)</span></span></td>\\s*<td class=\"lcell[ab]\" width=\"100%\"><span class=\"small\">\\s*<a href=\"(.*)\"><span >(.*)</span></a>\\s*</span></td>\\s*<td class=\"lcell[ab]\" width=\"120\" nowrap><span class=\"small\"><span >(.*)</span></span></td>\\s*</tr>");
+									Pattern p1 = Pattern.compile("<tr>\\s*<td class=\"lcell[ab]\" nowrap><span class=\"small\"><span >(.*)</span></span></td>\\s*<td class=\"lcell[ab]\" width=\"100%\"><span class=\"small\">\\s*(?:<span class=\"(?:mark|unalert|alert)\">[!#]</span>\\s*)?<a href=\"(.*)\"><span >(.*)</span></a>\\s*</span></td>\\s*<td class=\"lcell[ab]\" width=\"120\" nowrap><span class=\"small\"><span >(.*)</span></span></td>\\s*</tr>");
 									
 									// Suchmuster matchen mit data
 									Matcher m1 = p1.matcher(data);
@@ -187,29 +183,29 @@ public class Service_PM extends Service {
 									h.postDelayed(this, 60 * 1000);
 								}
 								
-							} catch (ClientProtocolException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-						else {
-							// Internetverbindung nicht mehr Moeglich
-							// deshalb Noti ausgeben und in 60 sekunden wieder versuchen !...
-							
-							Intent intent = new Intent(getApplicationContext(), Main.class);
-							PendingIntent pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+							} catch (ClientProtocolException e) {							
+								Intent intent = new Intent(getApplicationContext(), Main.class);
+								PendingIntent pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-							if(pref4.getBoolean("is_internet_noti_on", false) == false) {
-								createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
-								pref4.edit().putBoolean("is_internet_noti_on", true);
+								if(pref4.getBoolean("is_internet_noti_on", false) == false) {
+									createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
+									pref4.edit().putBoolean("is_internet_noti_on", true);
+								}
+								pref3.edit().putInt("anzahl_der_cp_pms", 0).commit();
+								
+								h.postDelayed(this, 60 * 1000);
+							} catch (IOException e) {							
+								Intent intent = new Intent(getApplicationContext(), Main.class);
+								PendingIntent pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+								if(pref4.getBoolean("is_internet_noti_on", false) == false) {
+									createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
+									pref4.edit().putBoolean("is_internet_noti_on", true);
+								}
+								pref3.edit().putInt("anzahl_der_cp_pms", 0).commit();
+								
+								h.postDelayed(this, 60 * 1000);
 							}
-							pref3.edit().putInt("anzahl_der_cp_pms", 0).commit();
-							
-							h.postDelayed(this, 60 * 1000);
-						}
 					}
 				}, 3000);
 			}
@@ -228,12 +224,30 @@ public class Service_PM extends Service {
 					}
 				}, 500);
 			}
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (ClientProtocolException e) {	
+			// Internetverbindung nicht mehr Moeglich
+			// deshalb Noti ausgeben und in 60 sekunden wieder versuchen !...
+			
+			Intent intent1 = new Intent(getApplicationContext(), Main.class);
+			PendingIntent pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+
+			if(pref4.getBoolean("is_internet_noti_on", false) == false) {
+				createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
+				pref4.edit().putBoolean("is_internet_noti_on", true);
+			}
+			pref3.edit().putInt("anzahl_der_cp_pms", 0).commit();
+		} catch (IOException e) {		
+			// Internetverbindung nicht mehr Moeglich
+			// deshalb Noti ausgeben und in 60 sekunden wieder versuchen !...
+			
+			Intent intent1 = new Intent(getApplicationContext(), Main.class);
+			PendingIntent pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+
+			if(pref4.getBoolean("is_internet_noti_on", false) == false) {
+				createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
+				pref4.edit().putBoolean("is_internet_noti_on", true);
+			}
+			pref3.edit().putInt("anzahl_der_cp_pms", 0).commit();
 		}
 		
 		return START_STICKY;
@@ -255,20 +269,6 @@ public class Service_PM extends Service {
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	/*
-	 * Pruefen ob Netzwerkverbindung da ist oder nicht...
-	 * 
-	 */
-	public boolean isOnline() {
-	    ConnectivityManager cm =
-	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
-	    if (netInfo != null && netInfo.isAvailable() && netInfo.isConnected()) {
-	        return true;
-	    }
-	    return false;
 	}
 
 }

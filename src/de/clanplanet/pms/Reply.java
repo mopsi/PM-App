@@ -1,6 +1,7 @@
 package de.clanplanet.pms;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,12 +19,16 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Reply extends Activity {
@@ -69,6 +74,8 @@ public class Reply extends Activity {
 	
 	// Httprequests req variable erstellen...
 	Httprequests req;
+	
+	public static final Charset charset = Charset.forName("UTF-8");
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -218,6 +225,14 @@ public class Reply extends Activity {
 											value = m.group(1);
 											
 										}
+
+										text = text.replace("\n", "\r\n");
+																	
+										byte[] bytes  = betreff.getBytes(charset);
+										byte[] bytes2 = text.getBytes(charset);
+										
+										betreff = new String(bytes, charset);
+										text    = new String(bytes2, charset);
 										
 										data = req.postPm(url, betreff, text, userid, value);
 										if(data.indexOf("Nachricht versendet...") > -1) {
@@ -283,7 +298,7 @@ public class Reply extends Activity {
 									isNoti.edit().putBoolean("isNoti_clanplanet_pms", false).commit();
 									
 									// Service bekommen...
-									service = PendingIntent.getService(getApplicationContext(), 0, new Intent(getApplicationContext(), Service_PM.class), 0);
+									service = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), Service_PM.class), 0);
 									
 									// Service stoppen...
 									alarm.cancel(service);
@@ -311,6 +326,48 @@ public class Reply extends Activity {
 					intent.putExtra("link", "");
 					startActivity(intent);
 				return true;
+				case R.id.read_sended_pms:
+					intent = new Intent(this, GesendeteNarichten.class);
+					startActivity(intent);
+				return true;
+				case R.id.contacts_menu:
+					intent = new Intent(this, Kontakte.class);
+					startActivity(intent);
+				return true;
+				case R.id.show_help:
+					AlertDialog.Builder builder_ = new AlertDialog.Builder(this);
+					builder_.setTitle("Über Clanplanet PM's App");
+					TextView text = new TextView(this);
+					text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" für die Plattform Clanplanet." +
+								  "<br>" +
+								  "<br>" +
+								  "Die App wurde entwickelt um Android Nutzern das PM Center von www.clanplanet.de zu erleichtern. Sie erfüllt die hauptsächlichen Funktionen des Clanplanet PM Centers." +
+								  "<br>" +
+								  "Was enthält die App für Funktionen (was kann sie mir bieten) ?" +
+								  "<br>" +
+								  "Die App erfüllt die folgenden Funktionen:" +
+								  "<br>" +
+								  	"- Benarichtigung bei neuer PM<br>" +
+								    "- Lesen der neuen PM's<br>" +
+								    "- Direktes Antworten auf PM's<br>" +
+								    "- Gelesene PM's anzeigen<br>" +
+								    "- Gesendete PM's anzeigen<br>" +
+								    "- Kontakten PM's schreiben, editieren und löschen<br>" +
+								    "- Schreiben neuer PM's<br>"));
+					text.setTextColor(getResources().getColor(R.color.black));
+					ScrollView view_scroll_ = new ScrollView(this);
+					view_scroll_.addView(text);
+					builder_.setView(view_scroll_);
+					builder_.setPositiveButton("Okay", new OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int arg1) {
+							dialog.cancel();
+						}
+					});
+					builder_.show();
+					return true;
+
 			default:
 				
 				return super.onOptionsItemSelected(item);

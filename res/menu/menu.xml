@@ -7,15 +7,37 @@
         android:showAsAction="always"
         android:icon="@drawable/mail_reply" />
     
-    <item 
-        android:id="@+id/readed_pms_show"
-        android:title="@string/pms_readed"
-        android:showAsAction="never" />
+    <item
+        android:id="@+id/add_contact"
+        android:title="@string/add_contact"
+        android:visible="false"
+        android:showAsAction="always"
+        android:icon="@drawable/add_user" />
     
     <item
         android:id="@+id/new_pm_write"
         android:showAsAction="never"
         android:title="@string/new_pm" />
+    
+    <item 
+        android:id="@+id/readed_pms_show"
+        android:title="@string/pms_readed"
+        android:showAsAction="never" />
+    
+    <item 
+        android:id="@+id/read_sended_pms"
+        android:title="@string/read_sended_pms"
+        android:showAsAction="never" />
+    
+    <item 
+        android:id="@+id/contacts_menu"
+        android:title="@string/title_activity_kontakte"
+        android:showAsAction="never" />
+    
+    <item 
+        android:id="@+id/show_help"
+        android:title="@string/ueber_app"
+        android:showAsAction="never" />
     
     <item 
         android:id="@+id/logout_item"

@@ -1,7 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-	<item 
-	    android:title="@string/logout"
-	    android:id="@+id/logout_button"
-	    android:showAsAction="ifRoom|withText"
-	    android:orderInCategory="100" />
-</menu>

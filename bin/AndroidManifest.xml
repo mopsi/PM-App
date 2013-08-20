@@ -51,6 +51,22 @@
             android:name="de.clanplanet.pms.NewPM"
             android:label="@string/title_activity_new_pm" >
         </activity>
+        <activity
+            android:name="de.clanplanet.pms.GesendeteNarichten"
+            android:label="@string/title_activity_gesendete_narichten" >
+        </activity>
+        <activity
+            android:name="de.clanplanet.pms.Kontakte"
+            android:label="@string/title_activity_kontakte" >
+        </activity>
+        <activity
+            android:name="de.clanplanet.pms.AddContacts"
+            android:label="@string/title_activity_add_contacts" >
+        </activity>
+        <activity
+            android:name="de.clanplanet.pms.EditContact"
+            android:label="@string/title_activity_edit_contact" >
+        </activity>
     </application>
 
 </manifest>
