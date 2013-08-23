@@ -224,9 +224,10 @@ public class Read_PM extends Activity {
 		smilelist.add(19, "knuddel.gif");
 		smilelist.add(20, "snief.gif");
 		smilelist.add(21, "drink.gif");
-		smilelist.add(19, "confused.gif");
-		smilelist.add(20, "herz.gif");
-		smilelist.add(21, "kaffee.gif");
+		smilelist.add(22, "confused.gif");
+		smilelist.add(23, "herz.gif");
+		smilelist.add(24, "kaffee.gif");
+		smilelist.add(25, "top.gif");
 		
 		ArrayList <String> replacement = new ArrayList<String>();
 		replacement.add(0, ":)");
@@ -254,6 +255,7 @@ public class Read_PM extends Activity {
 		replacement.add(22, "*confused*");
 		replacement.add(23, "*herz*");
 		replacement.add(24, "*kaffee*");
+		replacement.add(25, "*top*");
 		
 		for(int i = 0; i < smilelist.size(); i++) {
 			output = output.replace("<img src=\"" + baseurl + smilelist.get(i) + "\" align=\"absmiddle\">", replacement.get(i));

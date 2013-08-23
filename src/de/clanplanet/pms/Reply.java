@@ -17,17 +17,20 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,6 +74,7 @@ public class Reply extends Activity {
 	EditText absender_id;
 	EditText naricht_id;
 	Button   antworten;
+	TableLayout lay;
 	
 	// Httprequests req variable erstellen...
 	Httprequests req;
@@ -110,6 +114,7 @@ public class Reply extends Activity {
 		betreff_id  = (EditText) findViewById(R.id.betreff_reply_id);
 		absender_id = (EditText) findViewById(R.id.to_reply_id);
 		naricht_id  = (EditText) findViewById(R.id.text_reply_id);
+		lay = (TableLayout) findViewById(R.id.linlayout_reply_pm);
 		
 		// In die Felder schreiben...
 		if(betreff.startsWith("Re:")) {
@@ -166,6 +171,12 @@ public class Reply extends Activity {
 				betreff  = betreff_id.getText().toString();
 				absender = absender_id.getText().toString();
 				text     = naricht_id.getText().toString();
+				
+				InputMethodManager inputManager = (InputMethodManager)
+                        getSystemService(INPUT_METHOD_SERVICE); 
+
+				inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                           InputMethodManager.HIDE_NOT_ALWAYS);
 				
 				// Progress message setzen
 				progress.setMessage("Bitte warten...");

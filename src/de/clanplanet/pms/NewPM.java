@@ -17,17 +17,19 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,6 +73,7 @@ public class NewPM extends Activity {
 	EditText absender_id;
 	EditText naricht_id;
 	Button   antworten;
+	TableLayout lay;
 	
 	// Httprequests req variable erstellen...
 	Httprequests req;
@@ -110,10 +113,32 @@ public class NewPM extends Activity {
 		betreff_id  = (EditText) findViewById(R.id.betreff_reply_id);
 		absender_id = (EditText) findViewById(R.id.to_reply_id);
 		naricht_id  = (EditText) findViewById(R.id.text_reply_id);
+		lay = (TableLayout) findViewById(R.id.linlayout_new_pm);
 		
 		absender_id.setText(absender);
 		
 		alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+		
+		// Versuche Request durchzuführen...
+		try {
+			// Speichere Rückgabe in data String...
+			data = req.postLoginClanplanet(username, passwort);
+			
+			if(data.indexOf(regex) > -1) {
+				// Eingeloggt...
+			}
+			else {
+				// Nicht eingeloggt...
+				Toast.makeText(getApplicationContext(), "Unbekannter Fehler... , du wurdest ausgeloggt !", Toast.LENGTH_LONG).show();
+				finish();
+			}
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void setzeDialog(String message) {
@@ -162,6 +187,12 @@ public class NewPM extends Activity {
 				// Progress message setzen
 				progress.setMessage("Bitte warten...");
 				
+				InputMethodManager inputManager = (InputMethodManager)
+                        getSystemService(INPUT_METHOD_SERVICE); 
+
+				inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                           InputMethodManager.HIDE_NOT_ALWAYS);
+				
 				if(absender.isEmpty()) {
 					// Kein Betreff eingegeben...
 					setzeDialog("Du musst einen Betreff eintragen...");
@@ -181,71 +212,57 @@ public class NewPM extends Activity {
 				
 					h.postDelayed(new Runnable() {
 						public void run() {
-							
-							// Versuche Request durchzuführen...
 							try {
-								// Speichere Rückgabe in data String...
-								data = req.postLoginClanplanet(username, passwort);
-								
-								if(data.indexOf(regex) > -1) {
-									// Eingeloggt...
+								ArrayList<NameValuePair>liste_der_daten = new ArrayList<NameValuePair>();
+								liste_der_daten.add(new BasicNameValuePair("name", absender));
+								liste_der_daten.add(new BasicNameValuePair("suchen", "2"));
+								data = req.post(liste_der_daten, "http://www.clanplanet.de/personal/inbox_book.asp?rn=&action=search");
 									
-									ArrayList<NameValuePair>liste_der_daten = new ArrayList<NameValuePair>();
-									liste_der_daten.add(new BasicNameValuePair("name", absender));
-									liste_der_daten.add(new BasicNameValuePair("suchen", "2"));
+								p = Pattern.compile("<td class=\"lcell[ab]\" width=\"40\">(.*)&nbsp;&nbsp;</td>");
 									
-									data = req.post(liste_der_daten, "http://www.clanplanet.de/personal/inbox_book.asp?rn=&action=search");
+								m = p.matcher(data);
+								if(m.find()) {
+																	
+									url = "http://www.clanplanet.de/personal/sendmail.asp?rn=&action=send";
+									userid = m.group(1);
+									data = req.refresh_page("http://www.clanplanet.de/personal/sendmail.asp?rn=&betreff=&text=&userid=" + userid);
+									p = Pattern.compile("<input type=\"hidden\" name=\"receiver_list_number\" value=\"(.*)\">");
 									
-									p = Pattern.compile("<td class=\"lcell[ab]\" width=\"40\">(.*)&nbsp;&nbsp;</td>");
+									text = text.replace("\n", "\r\n");
+									
+													
+									byte[] bytes  = betreff.getBytes(charset);
+									byte[] bytes2 = text.getBytes(charset);
+									
+									betreff = new String(bytes, charset);
+									text    = new String(bytes2, charset);
 									
 									m = p.matcher(data);
+									
 									if(m.find()) {
-																		
-										url = "http://www.clanplanet.de/personal/sendmail.asp?rn=&action=send";
-										userid = m.group(1);
-										data = req.refresh_page("http://www.clanplanet.de/personal/sendmail.asp?rn=&betreff=&text=&userid=" + userid);
-										p = Pattern.compile("<input type=\"hidden\" name=\"receiver_list_number\" value=\"(.*)\">");
-										
-										text = text.replace("\n", "\r\n");
-										
-														
-										byte[] bytes  = betreff.getBytes(charset);
-										byte[] bytes2 = text.getBytes(charset);
-										
-										betreff = new String(bytes, charset);
-										text    = new String(bytes2, charset);
-										
-										m = p.matcher(data);
-										
-										if(m.find()) {
-											value = m.group(1);
-										}
-										
-										data = req.postPm(url, betreff, text, userid, value);
-										if(data.indexOf("Nachricht versendet...") > -1) {
-											// Naricht erfolgreich gesendet...
-											Toast.makeText(getApplicationContext(), "Naricht erfolgreich versendet...", Toast.LENGTH_SHORT).show();
-											progress.cancel();
-											Intent intent = new Intent(NewPM.this, PMs.class);
-											startActivity(intent);
-										}
-										else {
-											// Ein fehler ist aufgetreten !
-											Toast.makeText(getApplicationContext(), "Unbekannter Fehler...", Toast.LENGTH_LONG).show();
-											progress.cancel();		
-										}
+										value = m.group(1);
+									}
+									
+									data = req.postPm(url, betreff, text, userid, value);
+									if(data.indexOf("Nachricht versendet...") > -1) {
+										// Naricht erfolgreich gesendet...
+										Toast.makeText(getApplicationContext(), "Naricht erfolgreich versendet...", Toast.LENGTH_SHORT).show();
+										progress.cancel();
+										Intent intent = new Intent(NewPM.this, PMs.class);
+										startActivity(intent);
 									}
 									else {
-										Toast.makeText(getApplicationContext(), "Der eingegebene Clanplanet Benutzername exisitiert nicht...", Toast.LENGTH_LONG).show();
-										progress.cancel();
+										// Ein fehler ist aufgetreten !
+										Toast.makeText(getApplicationContext(), "Unbekannter Fehler...", Toast.LENGTH_LONG).show();
+										progress.cancel();		
 									}
 								}
 								else {
-									// Nicht eingeloggt...
-									Toast.makeText(getApplicationContext(), "Unbekannter Fehler... , du wurdest ausgeloggt !", Toast.LENGTH_LONG).show();
-									finish();
+									Toast.makeText(getApplicationContext(), "Der eingegebene Clanplanet Benutzername exisitiert nicht...", Toast.LENGTH_LONG).show();
+									progress.cancel();
 								}
-							} catch (ClientProtocolException e) {
+							} 
+							catch (ClientProtocolException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							} catch (IOException e) {
@@ -254,8 +271,7 @@ public class NewPM extends Activity {
 							}
 						}
 					}, 2 * 1000);
-				}
-				
+				}				
 				return true;			
 				case R.id.readed_pms_show: 
 					// Gelesene PM's activity anzeigen !
