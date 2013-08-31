@@ -2,6 +2,7 @@ package de.clanplanet.pms;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,11 +14,12 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
@@ -27,7 +29,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Read_PM extends Activity {
+public class Read_PM extends Activity implements TextToSpeech.OnInitListener {
 	
 	// Gespeicherter Benutzername...
 	SharedPreferences pref1;
@@ -68,13 +70,37 @@ public class Read_PM extends Activity {
 	String link;
 	String date;
 	
+	// Sound Speaker initialisieren !
+	TextToSpeech speaker;
+	
 	// Response String variable...
 	String data;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onInit(int status) {
+		if(status == TextToSpeech.SUCCESS) {
+			int lang = speaker.setLanguage(Locale.GERMAN);
+			if(lang == TextToSpeech.LANG_MISSING_DATA || lang == TextToSpeech.LANG_NOT_SUPPORTED) {
+				Toast.makeText(getApplicationContext(), "Die Sprache für Text To Speech ist bei dir nicht verfügbar !", Toast.LENGTH_LONG).show();	
+			}
+		}
+		else {
+			Toast.makeText(getApplicationContext(), "Unbekannter Fehler ist aufgetreten !", Toast.LENGTH_LONG).show();
+		}	
+	}
+	
+	public void speak() {
+		TextView text__ = (TextView) findViewById(10);
+		String text_ = text__.getText().toString();
+		speaker.speak(text_, TextToSpeech.QUEUE_FLUSH, null);
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_read__pm);
+		
+		speaker = new TextToSpeech(this, this);	
 		
 		// Bekommener intent...
 		intent = getIntent();
@@ -168,6 +194,7 @@ public class Read_PM extends Activity {
 								text.setMovementMethod(LinkMovementMethod.getInstance());
 								text.setTextColor(getResources().getColor(R.color.black));
 								text.setTextSize(18);
+								text.setId(10);
 								naricht_id.addView(text);
 							}
 						} catch (ClientProtocolException e) {
@@ -272,6 +299,8 @@ public class Read_PM extends Activity {
 			menu.getItem(0).setVisible(false);
 		}
 		
+		menu.getItem(2).setVisible(true);
+		
 		actionBar = getActionBar();
 		
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -353,13 +382,18 @@ public class Read_PM extends Activity {
 				intent.putExtra("link", "");
 				startActivity(intent);
 			return true;
+			case R.id.speaker_:
+				TextView text__ = (TextView) findViewById(10);
+				String text_ = text__.getText().toString();
+				speaker.speak(text_, TextToSpeech.QUEUE_FLUSH, null);
+			return true;
 			case R.id.reply:
 				Intent intent = new Intent(this, Reply.class);
 				intent.putExtra("betreff", betreff);
 				intent.putExtra("absender", absender);
 				intent.putExtra("link", link);
 				startActivity(intent);
-				return true;
+			return true;
 			case R.id.show_help:
 				AlertDialog.Builder builder_ = new AlertDialog.Builder(this);
 				builder_.setTitle("Über Clanplanet PM's App");

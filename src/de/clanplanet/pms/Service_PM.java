@@ -184,27 +184,13 @@ public class Service_PM extends Service {
 								}
 								
 							} catch (ClientProtocolException e) {							
-								Intent intent = new Intent(getApplicationContext(), Main.class);
-								PendingIntent pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-								if(pref4.getBoolean("is_internet_noti_on", false) == false) {
-									createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
-									pref4.edit().putBoolean("is_internet_noti_on", true);
-								}
 								pref3.edit().putInt("anzahl_der_cp_pms", 0).commit();
 								
 								h.postDelayed(this, 60 * 1000);
 							} catch (IOException e) {							
-								Intent intent = new Intent(getApplicationContext(), Main.class);
-								PendingIntent pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-								if(pref4.getBoolean("is_internet_noti_on", false) == false) {
-									createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
-									pref4.edit().putBoolean("is_internet_noti_on", true);
-								}
 								pref3.edit().putInt("anzahl_der_cp_pms", 0).commit();
 								
-								h.postDelayed(this, 60 * 1000);
+								h.postDelayed(this, 2 * 60 * 1000);
 							}
 					}
 				}, 3000);

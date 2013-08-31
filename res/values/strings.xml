@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ClanplanetPMs</string>
-    <string name="action_settings">Einstellungen</string>
+    <string name="app_name">Clanplanet PM App</string>
     <string name="username_text">Username:</string>
     <string name="password_text">Passwort:</string>
     <string name="title_activity_pms">PMs</string>
     <string name="login_button">Einloggen !</string>
     <string name="logout">Ausloggen</string>
     <string name="title_activity_read__pm">PM lesen</string>
-    <string name="hello_world">Hello world!</string>
     <string name="answer">Antworten !</string>
     <string name="title_activity_reply">PM Antworten</string>
     <string name="to_id_string">An: </string>
     <string name="betreff">Betreff: </string>
     <string name="text_id">Text: </string>
     <string name="pms_readed">Gelesene Narichten</string>
-    <string name="title_activity_readed_pms">Gelesene Narichten</string>
+    <string name="title_activity_readed_pms">Gelesene Nachrichten</string>
     <string name="new_pm">Neue PM schreiben !</string>
     <string name="title_activity_new_pm">Neue PM Schreiben !</string>
-    <string name="title_activity_gesendete_narichten">Gesendete Narichten</string>
-    <string name="read_sended_pms">Gesendete Narichten</string>
+    <string name="title_activity_gesendete_narichten">Gesendete Nachrichten</string>
+    <string name="read_sended_pms">Gesendete Nachrichten</string>
     <string name="title_activity_kontakte">Kontakte</string>
     <string name="title_activity_add_contacts">Kontakt hinzufügen</string>
     <string name="title_activity_edit_contact">Kontakt bearbeiten</string>
