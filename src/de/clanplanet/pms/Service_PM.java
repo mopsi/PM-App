@@ -75,6 +75,8 @@ public class Service_PM extends Service {
 	
 	int NOTIFICATION_ID = 100;
 	
+	PendingIntent pintent;
+	
 	@Override 
 	public void onCreate() {
 		super.onCreate();
@@ -125,7 +127,7 @@ public class Service_PM extends Service {
 			 * Pruefen ob eingeloggt oder nicht...
 			 * 
 			 */
-			if(data.indexOf("Eingeloggt als " + username) > -1) {
+			if(data.indexOf("Eingeloggt als <b>" + username + "</b>") > -1) {
 				// Eingeloggt...
 				// Wird auf neue PM geprueft...
 				h.postDelayed(new Runnable() {
@@ -215,10 +217,10 @@ public class Service_PM extends Service {
 			// deshalb Noti ausgeben und in 60 sekunden wieder versuchen !...
 			
 			Intent intent1 = new Intent(getApplicationContext(), Main.class);
-			PendingIntent pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+			pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
 
 			if(pref4.getBoolean("is_internet_noti_on", false) == false) {
-				createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
+		//		createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
 				pref4.edit().putBoolean("is_internet_noti_on", true);
 			}
 			pref3.edit().putInt("anzahl_der_cp_pms", 0).commit();
@@ -227,10 +229,10 @@ public class Service_PM extends Service {
 			// deshalb Noti ausgeben und in 60 sekunden wieder versuchen !...
 			
 			Intent intent1 = new Intent(getApplicationContext(), Main.class);
-			PendingIntent pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+			pintent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
 
 			if(pref4.getBoolean("is_internet_noti_on", false) == false) {
-				createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
+		//		createNot(pintent, "Deine Internetverbindung ist abgebrochen...", nMgr, NOTIFICATION_ID);
 				pref4.edit().putBoolean("is_internet_noti_on", true);
 			}
 			pref3.edit().putInt("anzahl_der_cp_pms", 0).commit();

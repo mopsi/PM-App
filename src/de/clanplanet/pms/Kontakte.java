@@ -94,14 +94,14 @@ public class Kontakte extends Activity {
 					data = req.postLoginClanplanet(username, passwort);
 					
 					// Regex muster setzen...
-					regex = "Eingeloggt als " + username;
+					regex = "Eingeloggt als <b>" + username + "</b>";
 					
 					if(data.indexOf(regex) > -1) {
 						// Eingeloggt !
 						data = req.refresh_page("http://www.clanplanet.de/personal/inbox_book.asp?rn=");
 					
 						// Neues Suchmuster erstellen...
-						regex = "<tr>\\s*<th nowrap>CP-Nr.</th>\\s*<th></th>\\s*<th>Name</th>\\s*<th width=\"100%\">Notiz</th>\\s*<th colspan=\"4\"></td>\\s*</tr>";
+						regex = "<tr>\\s*<th nowrap>Nr.</th>\\s*<th></th>\\s*<th>Name</th>\\s*<th width=\"100%\">Notiz</th>\\s*<th colspan=\"4\"></td>\\s*</tr>";
 						
 						// Suchmuster einleiten ...
 						p = Pattern.compile(regex);
@@ -138,7 +138,7 @@ public class Kontakte extends Activity {
 						else {
 							// Keine Kontakte vorhanden...
 							TextView text = new TextView(getApplicationContext());
-							text.setText(Html.fromHtml("Du hast noch keine Kontakte.<br>Du kannst einen Kontakt Ã¼ber das Symbol in der oberen Leiste hinzufÃ¼gen !"));
+							text.setText(Html.fromHtml("Du hast noch keine Kontakte.<br>Du kannst einen Kontakt über das Symbol in der oberen Leiste hinzufügen !"));
 							text.setTextColor(getResources().getColor(R.color.black));
 							text.setTextSize(18);
 							scroll_contacts.addView(text);
@@ -197,13 +197,13 @@ public class Kontakte extends Activity {
 			}
 		});
 		Button button_loeschen = new Button(this);
-		button_loeschen.setText("Kontakt lÃ¶schen");
+		button_loeschen.setText("Kontakt löschen");
 		button_loeschen.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				AlertDialog.Builder dialogdelete = new AlertDialog.Builder(Kontakte.this);
-				dialogdelete.setMessage(name.get(ID) + " wirklich lÃ¶schen ?");
+				dialogdelete.setMessage(name.get(ID) + " wirklich löschen ?");
 				dialogdelete.setPositiveButton("Ja", new OnClickListener() {
 					
 					@Override
@@ -221,10 +221,10 @@ public class Kontakte extends Activity {
 									Pattern p = Pattern.compile("<td class=\"lcell[ab]\">" + userid.get(ID) + "&nbsp;&nbsp;</td>\\s*<td class=\"lcell[ab]\">(.*)</td>\\s*<td class=\"lcell[ab]\" nowrap><a href=\"(.*)\">" + name.get(ID) + "</a></td>\\s*<td class=\"lcell[ab]\">" + notiz.get(ID) + "</td>");
 									m = p.matcher(data);
 									if(m.find()) {
-										Toast.makeText(getApplicationContext(), "Kontakt konnte nicht gelÃ¶scht werden ! Ein Fehler ist aufgetreten !", Toast.LENGTH_LONG).show();
+										Toast.makeText(getApplicationContext(), "Kontakt konnte nicht gelöscht werden ! Ein Fehler ist aufgetreten !", Toast.LENGTH_LONG).show();
 									}
 									else {
-										Toast.makeText(getApplicationContext(), "Kontakt wurde erfolgreich gelÃ¶scht !", Toast.LENGTH_LONG).show();
+										Toast.makeText(getApplicationContext(), "Kontakt wurde erfolgreich gelöscht !", Toast.LENGTH_LONG).show();
 										Intent intent = new Intent(Kontakte.this, Kontakte.class);
 										startActivity(intent);
 									}
@@ -333,21 +333,21 @@ public class Kontakte extends Activity {
 					AlertDialog.Builder builder_ = new AlertDialog.Builder(this);
 					builder_.setTitle("Ãœber Clanplanet PM's App");
 					TextView text = new TextView(this);
-					text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" fÃ¼r die Plattform Clanplanet." +
+					text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" für die Plattform Clanplanet." +
 								  "<br>" +
 								  "<br>" +
-								  "Die App wurde entwickelt um Android Nutzern das PM Center von www.clanplanet.de zu erleichtern. Sie erfÃ¼llt die hauptsÃ¤chlichen Funktionen des Clanplanet PM Centers." +
+								  "Die App wurde entwickelt um Android Nutzern das PM Center von www.clanplanet.de zu erleichtern. Sie erfüllt die hauptsächlichen Funktionen des Clanplanet PM Centers." +
 								  "<br>" +
-								  "Was enthÃ¤lt die App fÃ¼r Funktionen (was kann sie mir bieten) ?" +
+								  "Was enthält die App für Funktionen (was kann sie mir bieten) ?" +
 								  "<br>" +
-								  "Die App erfÃ¼llt die folgenden Funktionen:" +
+								  "Die App erfüllt die folgenden Funktionen:" +
 								  "<br>" +
 								  	"- Benarichtigung bei neuer PM<br>" +
 								    "- Lesen der neuen PM's<br>" +
 								    "- Direktes Antworten auf PM's<br>" +
 								    "- Gelesene PM's anzeigen<br>" +
 								    "- Gesendete PM's anzeigen<br>" +
-								    "- Kontakten PM's schreiben, editieren und lÃ¶schen<br>" +
+								    "- Kontakten PM's schreiben, editieren und löschen<br>" +
 								    "- Schreiben neuer PM's<br>"));
 					text.setTextColor(getResources().getColor(R.color.black));
 					ScrollView view_scroll_ = new ScrollView(this);

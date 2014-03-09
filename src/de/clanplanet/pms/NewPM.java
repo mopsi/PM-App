@@ -107,7 +107,7 @@ public class NewPM extends Activity {
 		link     = intent.getExtras().getString("link");
 		username = pref1.getString("username_clanplanet_pms", "");
 		passwort = pref2.getString("passwort_clanplanet_pms", "");
-		regex    = "Eingeloggt als " + username;
+		regex    = "Eingeloggt als <b>" + username + "</b>";
 		
 		// Elemente initialisieren...
 		betreff_id  = (EditText) findViewById(R.id.betreff_reply_id);
@@ -199,7 +199,7 @@ public class NewPM extends Activity {
 				}
 				else if(betreff.isEmpty()) {
 					// Kein Absender eingegeben...
-					setzeDialog("Du musst einen EmpfÃ¤nger eintragen...");
+					setzeDialog("Du musst einen Empfänger eintragen...");
 				}
 				else if(text.isEmpty()) {
 					// Kein Text eingegeben...
@@ -334,21 +334,21 @@ public class NewPM extends Activity {
 					AlertDialog.Builder builder_ = new AlertDialog.Builder(this);
 					builder_.setTitle("Ãœber Clanplanet PM's App");
 					TextView text = new TextView(this);
-					text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" fÃ¼r die Plattform Clanplanet." +
+					text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" für die Plattform Clanplanet." +
 								  "<br>" +
 								  "<br>" +
-								  "Die App wurde entwickelt um Android Nutzern das PM Center von www.clanplanet.de zu erleichtern. Sie erfÃ¼llt die hauptsÃ¤chlichen Funktionen des Clanplanet PM Centers." +
+								  "Die App wurde entwickelt um Android Nutzern das PM Center von www.clanplanet.de zu erleichtern. Sie erfüllt die hauptsächlichen Funktionen des Clanplanet PM Centers." +
 								  "<br>" +
-								  "Was enthÃ¤lt die App fÃ¼r Funktionen (was kann sie mir bieten) ?" +
+								  "Was enthält die App für Funktionen (was kann sie mir bieten) ?" +
 								  "<br>" +
-								  "Die App erfÃ¼llt die folgenden Funktionen:" +
+								  "Die App erfüllt die folgenden Funktionen:" +
 								  "<br>" +
 								  	"- Benarichtigung bei neuer PM<br>" +
 								    "- Lesen der neuen PM's<br>" +
 								    "- Direktes Antworten auf PM's<br>" +
 								    "- Gelesene PM's anzeigen<br>" +
 								    "- Gesendete PM's anzeigen<br>" +
-								    "- Kontakten PM's schreiben, editieren und lÃ¶schen<br>" +
+								    "- Kontakten PM's schreiben, editieren und löschen<br>" +
 								    "- Schreiben neuer PM's<br>"));
 					text.setTextColor(getResources().getColor(R.color.black));
 					ScrollView view_scroll_ = new ScrollView(this);

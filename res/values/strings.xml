@@ -14,11 +14,11 @@
     <string name="betreff">Betreff: </string>
     <string name="text_id">Text: </string>
     <string name="pms_readed">Gelesene Narichten</string>
-    <string name="title_activity_readed_pms">Gelesene Nachrichten</string>
+    <string name="title_activity_readed_pms">Gelesene Narichten</string>
     <string name="new_pm">Neue PM schreiben !</string>
     <string name="title_activity_new_pm">Neue PM Schreiben !</string>
-    <string name="title_activity_gesendete_narichten">Gesendete Nachrichten</string>
-    <string name="read_sended_pms">Gesendete Nachrichten</string>
+    <string name="title_activity_gesendete_narichten">Gesendete Narichten</string>
+    <string name="read_sended_pms">Gesendete Narichten</string>
     <string name="title_activity_kontakte">Kontakte</string>
     <string name="title_activity_add_contacts">Kontakt hinzufügen</string>
     <string name="title_activity_edit_contact">Kontakt bearbeiten</string>

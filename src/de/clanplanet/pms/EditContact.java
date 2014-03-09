@@ -79,7 +79,7 @@ public class EditContact extends Activity {
 		h = new Handler();
 		progress = new ProgressDialog(this);
 		progress.setTitle("Clanplanet PM's App");
-		progress.setMessage("Die Ã„nderungen werden Ã¼bernommen !");
+		progress.setMessage("Die Änderungen werden übernommen !");
 		progress.setCancelable(false);
 		
 		// Elemente setzen !
@@ -92,12 +92,12 @@ public class EditContact extends Activity {
 		name   = intent.getExtras().getString("name");
 		userid = intent.getExtras().getString("userid");
 		
-		notiz = notiz.replace("&#228;", "Ã¤");
-		notiz = notiz.replace("&#196;", "Ã„");
-		notiz = notiz.replace("&#246;", "Ã¶");
-		notiz = notiz.replace("&#214;", "Ã–");
-		notiz = notiz.replace("&#252;", "Ã¼");
-		notiz = notiz.replace("&#220;", "Ãœ");
+		notiz = notiz.replace("&#228;", "Ä");
+		notiz = notiz.replace("&#196;", "ä");
+		notiz = notiz.replace("&#246;", "Ö");
+		notiz = notiz.replace("&#214;", "ö");
+		notiz = notiz.replace("&#252;", "Ü");
+		notiz = notiz.replace("&#220;", "ü");
 		
 		name_edit.setText(name);
 		notiz_edit.setText(notiz);
@@ -113,7 +113,7 @@ public class EditContact extends Activity {
 		pw = pref2.getString("passwort_clanplanet_pms", "");
 		
 		// Regex initialisieren...
-		regex = "Eingeloggt als " + user;
+		regex = "Eingeloggt als <b>" + user + "</b>";
 		
 		edit.setOnClickListener(new View.OnClickListener() {
 			
@@ -249,23 +249,23 @@ public class EditContact extends Activity {
 			return true;			
 			case R.id.show_help:
 				AlertDialog.Builder builder_ = new AlertDialog.Builder(this);
-				builder_.setTitle("Ãœber Clanplanet PM's App");
+				builder_.setTitle("Über Clanplanet PM's App");
 				TextView text = new TextView(this);
-				text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" fÃ¼r die Plattform Clanplanet." +
+				text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" für die Plattform Clanplanet." +
 							  "<br>" +
 							  "<br>" +
-							  "Die App wurde entwickelt um Android Nutzern das PM Center von www.clanplanet.de zu erleichtern. Sie erfÃ¼llt die hauptsÃ¤chlichen Funktionen des Clanplanet PM Centers." +
+							  "Die App wurde entwickelt um Android Nutzern das PM Center von www.clanplanet.de zu erleichtern. Sie erfüllt die hauptsächlichen Funktionen des Clanplanet PM Centers." +
 							  "<br>" +
-							  "Was enthÃ¤lt die App fÃ¼r Funktionen (was kann sie mir bieten) ?" +
+							  "Was enthält die App für Funktionen (was kann sie mir bieten) ?" +
 							  "<br>" +
-							  "Die App erfÃ¼llt die folgenden Funktionen:" +
+							  "Die App erfüllt die folgenden Funktionen:" +
 							  "<br>" +
 							  	"- Benarichtigung bei neuer PM<br>" +
 							    "- Lesen der neuen PM's<br>" +
 							    "- Direktes Antworten auf PM's<br>" +
 							    "- Gelesene PM's anzeigen<br>" +
 							    "- Gesendete PM's anzeigen<br>" +
-							    "- Kontakten PM's schreiben, editieren und lÃ¶schen<br>" +
+							    "- Kontakten PM's schreiben, editieren und löschen<br>" +
 							    "- Schreiben neuer PM's<br>"));
 				text.setTextColor(getResources().getColor(R.color.black));
 				ScrollView view_scroll_ = new ScrollView(this);

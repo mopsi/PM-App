@@ -139,7 +139,7 @@ public class Main extends Activity {
 				data = req.postLoginClanplanet(pref1.getString("username_clanplanet_pms", ""), pref2.getString("passwort_clanplanet_pms", ""));				
 
 				// Suchmuster...
-				regex = "Eingeloggt als " + pref1.getString("username_clanplanet_pms", "");
+				regex = "Eingeloggt als <b>" + pref1.getString("username_clanplanet_pms", "") + "</b>";
 				
 				// Pruefen ob eingeloggt....
 				if(data.indexOf(regex) > -1) {
@@ -155,11 +155,11 @@ public class Main extends Activity {
 				}
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block
-				Toast.makeText(getApplicationContext(), "Keine Internet verbindung mÃ¶glich !", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "Keine Internet verbindung möglich !", Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				Toast.makeText(getApplicationContext(), "Keine Internet verbindung mÃ¶glich !", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "Keine Internet verbindung möglich !", Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
 		}
@@ -181,7 +181,7 @@ public class Main extends Activity {
 			@Override
 			public void onClick(View arg0) {
 					// Ausgabe...
-					error.setText("Daten werden geprueft...");
+					error.setText("Daten werden geprüft...");
 					
 					/*
 					 * Benutzername nicht eingegeben
@@ -235,7 +235,7 @@ public class Main extends Activity {
 							 */
 
 							// Suchmuster...
-							regex = "Eingeloggt als " + pref1.getString("username_clanplanet_pms", "");
+							regex = "Eingeloggt als <b>" + pref1.getString("username_clanplanet_pms", "") + "</b>";
 							
 							if(data.indexOf(regex) > -1) {
 								// Eingeloggt !	
@@ -259,10 +259,10 @@ public class Main extends Activity {
 							}
 							
 						} catch (ClientProtocolException e) {
-							error.setText("Keine Internetverbindung mÃ¶glich !");
+							error.setText("Keine Internetverbindung möglich !");
 							e.printStackTrace();
 						} catch (IOException e) {
-							error.setText("Keine Internetverbindung mÃ¶glich !");
+							error.setText("Keine Internetverbindung möglich !");
 							e.printStackTrace();
 						}
 					}

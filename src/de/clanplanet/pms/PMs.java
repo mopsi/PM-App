@@ -155,7 +155,7 @@ public class PMs extends Activity {
 		prog = new ProgressDialog(this);
 		prog.setCancelable(false);
 		prog.getWindow().setGravity(Gravity.CENTER);
-		prog.setTitle("Clanplanet PM's werden geprÃ¼ft...");
+		prog.setTitle("Clanplanet PM's werden geprüft...");
 		prog.setMessage("PM's werden geladen...");
 		prog.show();
 		
@@ -182,7 +182,7 @@ public class PMs extends Activity {
 			 * Pruefen ob eingeloggt...
 			 * 
 			 */
-			if(data.indexOf("Eingeloggt als " + username) > -1) {
+			if(data.indexOf("Eingeloggt als <b>" + username + "</b>") > -1) {
 				// Eingeloggt...
 				
 				/*
@@ -400,21 +400,21 @@ public class PMs extends Activity {
 				AlertDialog.Builder builder_ = new AlertDialog.Builder(this);
 				builder_.setTitle("Ãœber Clanplanet PM's App");
 				TextView text = new TextView(this);
-				text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" fÃ¼r die Plattform Clanplanet." +
+				text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" für die Plattform Clanplanet." +
 							  "<br>" +
 							  "<br>" +
-							  "Die App wurde entwickelt um Android Nutzern das PM Center von www.clanplanet.de zu erleichtern. Sie erfÃ¼llt die hauptsÃ¤chlichen Funktionen des Clanplanet PM Centers." +
+							  "Die App wurde entwickelt um Android Nutzern das PM Center von www.clanplanet.de zu erleichtern. Sie erfüllt die hauptsächlichen Funktionen des Clanplanet PM Centers." +
 							  "<br>" +
-							  "Was enthÃ¤lt die App fÃ¼r Funktionen (was kann sie mir bieten) ?" +
+							  "Was enthält die App für Funktionen (was kann sie mir bieten) ?" +
 							  "<br>" +
-							  "Die App erfÃ¼llt die folgenden Funktionen:" +
+							  "Die App erfüllt die folgenden Funktionen:" +
 							  "<br>" +
 							  	"- Benarichtigung bei neuer PM<br>" +
 							    "- Lesen der neuen PM's<br>" +
 							    "- Direktes Antworten auf PM's<br>" +
 							    "- Gelesene PM's anzeigen<br>" +
 							    "- Gesendete PM's anzeigen<br>" +
-							    "- Kontakten PM's schreiben, editieren und lÃ¶schen<br>" +
+							    "- Kontakten PM's schreiben, editieren und löschen<br>" +
 							    "- Schreiben neuer PM's<br>"));
 				text.setTextColor(getResources().getColor(R.color.black));
 				ScrollView view_scroll_ = new ScrollView(this);
