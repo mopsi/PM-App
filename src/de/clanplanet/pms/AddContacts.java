@@ -133,7 +133,7 @@ public class AddContacts extends Activity {
 								try {
 									data = req.post(listederdaten, "http://www.clanplanet.de/personal/inbox_book.asp?rn=&action=search");
 								
-									regex = "<tr>\\s*<th nowrap>CP-Nr.</th>\\s*<th colspan=\"4\">Name</th>\\s*</tr>";
+									regex = "<tr>\\s*<th nowrap>Nr.</th>\\s*<th colspan=\"4\">Name</th>\\s*</tr>";
 									p = Pattern.compile(regex);
 									m = p.matcher(data);
 									if(m.find()) {
@@ -192,7 +192,7 @@ public class AddContacts extends Activity {
 		final String userid_ = userid.get(ID);
 		final String user    = name_.get(ID);
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-		dialog.setMessage(user + " wirklich zu den Kontakten hinzufÃ¼gen ?");
+		dialog.setMessage(user + " wirklich zu den Kontakten hinzufügen ?");
 		dialog.setPositiveButton("Ja", new OnClickListener() {
 			
 			@Override
@@ -307,7 +307,7 @@ public class AddContacts extends Activity {
 			return true;			
 			case R.id.show_help:
 				AlertDialog.Builder builder_ = new AlertDialog.Builder(this);
-				builder_.setTitle("Ãœber Clanplanet PM's App");
+				builder_.setTitle("Über Clanplanet PM's App");
 				TextView text = new TextView(this);
 				text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" für die Plattform Clanplanet." +
 							  "<br>" +

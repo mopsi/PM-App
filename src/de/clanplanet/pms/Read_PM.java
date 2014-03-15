@@ -182,12 +182,12 @@ public class Read_PM extends Activity implements TextToSpeech.OnInitListener {
 								}
 								html = replace_html_smileys(html);			
 								
-								html = html.replace("&#228;", "Ä");
-								html = html.replace("&#196;", "ä");
-								html = html.replace("&#246;", "Ö");
-								html = html.replace("&#214;", "ö");
-								html = html.replace("&#252;", "Ü");
-								html = html.replace("&#220;", "ü");
+								html = html.replace("&#228;", "ä");
+								html = html.replace("&#196;", "Ä");
+								html = html.replace("&#246;", "ö");
+								html = html.replace("&#214;", "Ö");
+								html = html.replace("&#252;", "ü");
+								html = html.replace("&#220;", "Ü");
 								TextView text = new TextView(Read_PM.this);
 								text.setText(Html.fromHtml(html));
 								text.setLinksClickable(true);
@@ -396,7 +396,7 @@ public class Read_PM extends Activity implements TextToSpeech.OnInitListener {
 			return true;
 			case R.id.show_help:
 				AlertDialog.Builder builder_ = new AlertDialog.Builder(this);
-				builder_.setTitle("Ãœber Clanplanet PM's App");
+				builder_.setTitle("Über Clanplanet PM's App");
 				TextView text = new TextView(this);
 				text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" für die Plattform Clanplanet." +
 							  "<br>" +

@@ -280,7 +280,7 @@ public class ReadedPMs extends Activity {
 			break;
 			case R.id.show_help:
 				AlertDialog.Builder builder_ = new AlertDialog.Builder(this);
-				builder_.setTitle("Ãœber Clanplanet PM's App");
+				builder_.setTitle("Über Clanplanet PM's App");
 				TextView text = new TextView(this);
 				text.setText(Html.fromHtml("Die Clanplanet PM's App ist eine \"Open Source App\" für die Plattform Clanplanet." +
 							  "<br>" +
